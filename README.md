@@ -15,9 +15,9 @@ To build the project, simply run
 zig build
 ```
 
-You can also use the following command to build the project and immediately run it
+This will create the interpretor executable at `./zig-out/bin/brain`. The interpretor can then be used on a file of your choice by providing the file as a command line argument as shown below:
 ```
-zig build run
+./zig-out/bin/brain examples/helloworld.bf
 ```
 
 ## Additional Notes
