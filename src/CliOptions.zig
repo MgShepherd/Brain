@@ -1,18 +1,16 @@
 const std = @import("std");
+const CliOptions = @This();
 
 pub const ProcessArgsError = error{ OutOfMemory, NotEnoughArguments };
 
-const Options = struct {
-    fileName: []const u8,
-};
+fileName: []const u8,
+argIter: std.process.ArgIterator,
 
-pub fn process_cli_args(alloc: std.mem.Allocator) ProcessArgsError!Options {
-    var options: Options = undefined;
+pub fn loadCliOptions(alloc: std.mem.Allocator) ProcessArgsError!CliOptions {
     var argIter = try std.process.ArgIterator.initWithAllocator(alloc);
-    defer argIter.deinit();
     _ = argIter.next();
 
-    options.fileName = argIter.next() orelse {
+    const fileName = argIter.next() orelse {
         std.debug.print("Input file argument must be provided", .{});
         return ProcessArgsError.NotEnoughArguments;
     };
@@ -21,5 +19,12 @@ pub fn process_cli_args(alloc: std.mem.Allocator) ProcessArgsError!Options {
         std.debug.print("Argument Provided: {s}\n", .{arg});
     }
 
-    return options;
+    return CliOptions{
+        .fileName = fileName,
+        .argIter = argIter,
+    };
+}
+
+pub fn deinit(self: *CliOptions) void {
+    self.argIter.deinit();
 }
